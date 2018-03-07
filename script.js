@@ -11,17 +11,13 @@ const map = [
     "WWWWWWWW"
 ];
 
-// " "floor
-// "W" Wall
-// "O" Dot
-// "S" Player
-// "B" Box
-// "X" Box on Dot
-// "Y" Player on Dot
-
-// player position variables
-let pRow = 2;
-let pCol = 2;
+// " " - floor
+// "W" - Wall
+// "O" - Dot
+// "S" - Player
+// "B" - Box
+// "X" - Box on Dot
+// "Y" - Player on Dot
 
 // mutate map into a nested array
 let mapA = [];
@@ -68,146 +64,126 @@ function drawBoard() {
 }
 drawBoard();
 
+// "move stuff" function logic
+function move(right, down, oneOver, twoOver) {
+    // if needed, change the cell two spots over
+    if (twoOver !== "none") {
+        mapA[playerRow + (2 * down)][playerCol + (2 * right)] = twoOver;
+    }
+    // change the cell one spot over
+    mapA[playerRow + down][playerCol + right] = oneOver;
+    // change the current cell (depending on whether you were in a dot or not)
+    if (mapA[playerRow][playerCol] === "S") {
+        mapA[playerRow][playerCol] = " ";
+    } else {
+        mapA[playerRow][playerCol] = "O";
+    }
+    // change player x,y based on the direction moved
+    if (right === 1) {playerCol++;};
+    if (right === -1) {playerCol--;};
+    if (down === 1) {playerRow++;};
+    if (down === -1) {playerRow--;};
+    // redraw board
+    drawBoard();
+}
+
+// player position
+let playerRow = 2;
+let playerCol = 2;
+
 // key handler, main game mechanics
 document.addEventListener("keydown", event => {
     const key = event.key;
     console.log(key);
-
+    
     // RIGHT
     if (key === "ArrowRight") {
-        // player on floor
-        if (mapA[pRow][pCol] === "S") {
-            // move box floor
-            if (mapA[pRow][pCol + 1] === "B" && mapA[pRow][pCol + 2] === " ") {
-                mapA[pRow][pCol + 2] = "B";
-                mapA[pRow][pCol + 1] = "S";
-                mapA[pRow][pCol] = " ";
-                pCol++;
-                drawBoard();
-                // move box dot -> floor
-            } else if (mapA[pRow][pCol + 1] === "X" && mapA[pRow][pCol + 2] === " ") {
-                mapA[pRow][pCol + 2] = "B";
-                mapA[pRow][pCol + 1] = "Y";
-                mapA[pRow][pCol] = " ";
-                pCol++;
-                drawBoard();
-            } else if (mapA[pRow][pCol + 1] === "B" && mapA[pRow][pCol + 2] === "O") {
-                // move box dot
-                mapA[pRow][pCol + 2] = "X";
-                mapA[pRow][pCol + 1] = "S";
-                mapA[pRow][pCol] = " ";
-                pCol++;
-                drawBoard();
-            } else if (mapA[pRow][pCol + 1] === " ") {
-                // move floor
-                mapA[pRow][pCol + 1] = "S";
-                mapA[pRow][pCol] = " ";
-                pCol++;
-                drawBoard();
-            } else if (mapA[pRow][pCol + 1] === "O") {
-                // move dot
-                mapA[pRow][pCol + 1] = "Y";
-                mapA[pRow][pCol] = " ";
-                pCol++;
-                drawBoard();
-            }
-            // player in dot
-        } else {
-            // move box floor
-            if (mapA[pRow][pCol + 1] === "B" && mapA[pRow][pCol + 2] === " ") {
-                mapA[pRow][pCol + 2] = "B";
-                mapA[pRow][pCol + 1] = "S";
-                mapA[pRow][pCol] = "O";
-                pCol++;
-                drawBoard();
-            } else if (mapA[pRow][pCol + 1] === "B" && mapA[pRow][pCol + 2] === "O") {
-                // move box dot
-                mapA[pRow][pCol + 2] = "X";
-                mapA[pRow][pCol + 1] = "S";
-                mapA[pRow][pCol] = "O";
-                pCol++;
-                drawBoard();
-            } else if (mapA[pRow][pCol + 1] === " ") {
-                // move floor
-                mapA[pRow][pCol + 1] = "S";
-                mapA[pRow][pCol] = "O";
-                pCol++;
-                drawBoard();
-            } else if (mapA[pRow][pCol + 1] === "O") {
-                // move dot
-                mapA[pRow][pCol + 1] = "Y";
-                mapA[pRow][pCol] = "O";
-                pCol++;
-                drawBoard();
-            }
+        // move box -> floor
+        if (mapA[playerRow][playerCol + 1] === "B" && mapA[playerRow][playerCol + 2] === " ") {
+            move(1, 0, "S", "B");
+        // move box -> dot
+        } else if (mapA[playerRow][playerCol + 1] === "B" && mapA[playerRow][playerCol + 2] === "O") {
+            move(1, 0, "S", "X");
+        // move pink box -> floor
+        } else if (mapA[playerRow][playerCol + 1] === "X" && mapA[playerRow][playerCol + 2] === " ") {
+            move(1, 0, "Y", "B");
+        // move pink box -> dot
+        } else if (mapA[playerRow][playerCol + 1] === "X" && mapA[playerRow][playerCol + 2] === "O") {
+            move(1, 0, "Y", "X");
+        // move -> floor
+        } else if (mapA[playerRow][playerCol + 1] === " ") {
+            move(1, 0, "S", "none");
+        // move -> dot
+        } else if (mapA[playerRow][playerCol + 1] === "O") {
+            move(1, 0, "Y", "none");
         }
     }
 
     // LEFT
     if (key === "ArrowLeft") {
         // player on floor
-        if (mapA[pRow][pCol] === "S") {
+        if (mapA[playerRow][playerCol] === "S") {
             // move box floor
-            if (mapA[pRow][pCol - 1] === "B" && mapA[pRow][pCol - 2] === " ") {
-                mapA[pRow][pCol - 2] = "B";
-                mapA[pRow][pCol - 1] = "S";
-                mapA[pRow][pCol] = " ";
-                pCol--;
+            if (mapA[playerRow][playerCol - 1] === "B" && mapA[playerRow][playerCol - 2] === " ") {
+                mapA[playerRow][playerCol - 2] = "B";
+                mapA[playerRow][playerCol - 1] = "S";
+                mapA[playerRow][playerCol] = " ";
+                playerCol--;
                 drawBoard();
                 // move box dot -> floor
-            } else if (mapA[pRow][pCol - 1] === "X" && mapA[pRow][pCol - 2] === " ") {
-                mapA[pRow][pCol - 2] = "B";
-                mapA[pRow][pCol - 1] = "Y";
-                mapA[pRow][pCol] = " ";
-                pCol--;
+            } else if (mapA[playerRow][playerCol - 1] === "X" && mapA[playerRow][playerCol - 2] === " ") {
+                mapA[playerRow][playerCol - 2] = "B";
+                mapA[playerRow][playerCol - 1] = "Y";
+                mapA[playerRow][playerCol] = " ";
+                playerCol--;
                 drawBoard();
-            } else if (mapA[pRow][pCol - 1] === "B" && mapA[pRow][pCol - 2] === "O") {
+            } else if (mapA[playerRow][playerCol - 1] === "B" && mapA[playerRow][playerCol - 2] === "O") {
                 // move box dot
-                mapA[pRow][pCol - 2] = "X";
-                mapA[pRow][pCol - 1] = "S";
-                mapA[pRow][pCol] = " ";
-                pCol--;
+                mapA[playerRow][playerCol - 2] = "X";
+                mapA[playerRow][playerCol - 1] = "S";
+                mapA[playerRow][playerCol] = " ";
+                playerCol--;
                 drawBoard();
-            } else if (mapA[pRow][pCol - 1] === " ") {
+            } else if (mapA[playerRow][playerCol - 1] === " ") {
                 // move floor
-                mapA[pRow][pCol - 1] = "S";
-                mapA[pRow][pCol] = " ";
-                pCol--;
+                mapA[playerRow][playerCol - 1] = "S";
+                mapA[playerRow][playerCol] = " ";
+                playerCol--;
                 drawBoard();
-            } else if (mapA[pRow][pCol - 1] === "O") {
+            } else if (mapA[playerRow][playerCol - 1] === "O") {
                 // move dot
-                mapA[pRow][pCol - 1] = "Y";
-                mapA[pRow][pCol] = " ";
-                pCol--;
+                mapA[playerRow][playerCol - 1] = "Y";
+                mapA[playerRow][playerCol] = " ";
+                playerCol--;
                 drawBoard();
             }
             // player in dot
         } else {
             // move box floor
-            if (mapA[pRow][pCol - 1] === "B" && mapA[pRow][pCol - 2] === " ") {
-                mapA[pRow][pCol - 2] = "B";
-                mapA[pRow][pCol - 1] = "S";
-                mapA[pRow][pCol] = "O";
-                pCol--;
+            if (mapA[playerRow][playerCol - 1] === "B" && mapA[playerRow][playerCol - 2] === " ") {
+                mapA[playerRow][playerCol - 2] = "B";
+                mapA[playerRow][playerCol - 1] = "S";
+                mapA[playerRow][playerCol] = "O";
+                playerCol--;
                 drawBoard();
-            } else if (mapA[pRow][pCol - 1] === "B" && mapA[pRow][pCol - 2] === "O") {
+            } else if (mapA[playerRow][playerCol - 1] === "B" && mapA[playerRow][playerCol - 2] === "O") {
                 // move box dot
-                mapA[pRow][pCol - 2] = "X";
-                mapA[pRow][pCol - 1] = "S";
-                mapA[pRow][pCol] = "O";
-                pCol--;
+                mapA[playerRow][playerCol - 2] = "X";
+                mapA[playerRow][playerCol - 1] = "S";
+                mapA[playerRow][playerCol] = "O";
+                playerCol--;
                 drawBoard();
-            } else if (mapA[pRow][pCol - 1] === " ") {
+            } else if (mapA[playerRow][playerCol - 1] === " ") {
                 // move floor
-                mapA[pRow][pCol - 1] = "S";
-                mapA[pRow][pCol] = "O";
-                pCol--;
+                mapA[playerRow][playerCol - 1] = "S";
+                mapA[playerRow][playerCol] = "O";
+                playerCol--;
                 drawBoard();
-            } else if (mapA[pRow][pCol - 1] === "O") {
+            } else if (mapA[playerRow][playerCol - 1] === "O") {
                 // move dot
-                mapA[pRow][pCol - 1] = "Y";
-                mapA[pRow][pCol] = "O";
-                pCol--;
+                mapA[playerRow][playerCol - 1] = "Y";
+                mapA[playerRow][playerCol] = "O";
+                playerCol--;
                 drawBoard();
             }
         }
@@ -216,68 +192,68 @@ document.addEventListener("keydown", event => {
     // DOWN
     if (key === "ArrowDown") {
         // player on floor
-        if (mapA[pRow][pCol] === "S") {
+        if (mapA[playerRow][playerCol] === "S") {
             // move box floor
-            if (mapA[pRow + 1][pCol] === "B" && mapA[pRow + 2][pCol] === " ") {
-                mapA[pRow + 2][pCol] = "B";
-                mapA[pRow + 1][pCol] = "S";
-                mapA[pRow][pCol] = " ";
-                pRow++;
+            if (mapA[playerRow + 1][playerCol] === "B" && mapA[playerRow + 2][playerCol] === " ") {
+                mapA[playerRow + 2][playerCol] = "B";
+                mapA[playerRow + 1][playerCol] = "S";
+                mapA[playerRow][playerCol] = " ";
+                playerRow++;
                 drawBoard();
                 // move box dot -> floor
-            } else if (mapA[pRow + 1][pCol] === "X" && mapA[pRow + 2][pCol] === " ") {
-                mapA[pRow + 2][pCol] = "B";
-                mapA[pRow + 1][pCol] = "Y";
-                mapA[pRow][pCol] = " ";
-                pRow++;
+            } else if (mapA[playerRow + 1][playerCol] === "X" && mapA[playerRow + 2][playerCol] === " ") {
+                mapA[playerRow + 2][playerCol] = "B";
+                mapA[playerRow + 1][playerCol] = "Y";
+                mapA[playerRow][playerCol] = " ";
+                playerRow++;
                 drawBoard();
-            } else if (mapA[pRow + 1][pCol] === "B" && mapA[pRow + 2][pCol] === "O") {
+            } else if (mapA[playerRow + 1][playerCol] === "B" && mapA[playerRow + 2][playerCol] === "O") {
                 // move box dot
-                mapA[pRow + 2][pCol] = "X";
-                mapA[pRow + 1][pCol] = "S";
-                mapA[pRow][pCol] = " ";
-                pRow++;
+                mapA[playerRow + 2][playerCol] = "X";
+                mapA[playerRow + 1][playerCol] = "S";
+                mapA[playerRow][playerCol] = " ";
+                playerRow++;
                 drawBoard();
-            } else if (mapA[pRow + 1][pCol] === " ") {
+            } else if (mapA[playerRow + 1][playerCol] === " ") {
                 // move floor
-                mapA[pRow + 1][pCol] = "S";
-                mapA[pRow][pCol] = " ";
-                pRow++;
+                mapA[playerRow + 1][playerCol] = "S";
+                mapA[playerRow][playerCol] = " ";
+                playerRow++;
                 drawBoard();
-            } else if (mapA[pRow + 1][pCol] === "O") {
+            } else if (mapA[playerRow + 1][playerCol] === "O") {
                 // move dot
-                mapA[pRow + 1][pCol] = "Y";
-                mapA[pRow][pCol] = " ";
-                pRow++;
+                mapA[playerRow + 1][playerCol] = "Y";
+                mapA[playerRow][playerCol] = " ";
+                playerRow++;
                 drawBoard();
             }
             // player in dot
         } else {
             // move box floor
-            if (mapA[pRow + 1][pCol] === "B" && mapA[pRow + 2][pCol] === " ") {
-                mapA[pRow + 2][pCol] = "B";
-                mapA[pRow + 1][pCol] = "S";
-                mapA[pRow][pCol] = "O";
-                pRow++;
+            if (mapA[playerRow + 1][playerCol] === "B" && mapA[playerRow + 2][playerCol] === " ") {
+                mapA[playerRow + 2][playerCol] = "B";
+                mapA[playerRow + 1][playerCol] = "S";
+                mapA[playerRow][playerCol] = "O";
+                playerRow++;
                 drawBoard();
-            } else if (mapA[pRow + 1][pCol] === "B" && mapA[pRow + 2][pCol] === "O") {
+            } else if (mapA[playerRow + 1][playerCol] === "B" && mapA[playerRow + 2][playerCol] === "O") {
                 // move box dot
-                mapA[pRow + 2][pCol] = "X";
-                mapA[pRow + 1][pCol] = "S";
-                mapA[pRow][pCol] = "O";
-                pRow++;
+                mapA[playerRow + 2][playerCol] = "X";
+                mapA[playerRow + 1][playerCol] = "S";
+                mapA[playerRow][playerCol] = "O";
+                playerRow++;
                 drawBoard();
-            } else if (mapA[pRow + 1][pCol] === " ") {
+            } else if (mapA[playerRow + 1][playerCol] === " ") {
                 // move floor
-                mapA[pRow + 1][pCol] = "S";
-                mapA[pRow][pCol] = "O";
-                pRow++;
+                mapA[playerRow + 1][playerCol] = "S";
+                mapA[playerRow][playerCol] = "O";
+                playerRow++;
                 drawBoard();
-            } else if (mapA[pRow + 1][pCol] === "O") {
+            } else if (mapA[playerRow + 1][playerCol] === "O") {
                 // move dot
-                mapA[pRow + 1][pCol] = "Y";
-                mapA[pRow][pCol] = "O";
-                pRow++;
+                mapA[playerRow + 1][playerCol] = "Y";
+                mapA[playerRow][playerCol] = "O";
+                playerRow++;
                 drawBoard();
             }
         }
@@ -286,68 +262,68 @@ document.addEventListener("keydown", event => {
     // UP
     if (key === "ArrowUp") {
         // player on floor
-        if (mapA[pRow][pCol] === "S") {
+        if (mapA[playerRow][playerCol] === "S") {
             // move box floor
-            if (mapA[pRow - 1][pCol] === "B" && mapA[pRow - 2][pCol] === " ") {
-                mapA[pRow - 2][pCol] = "B";
-                mapA[pRow - 1][pCol] = "S";
-                mapA[pRow][pCol] = " ";
-                pRow--;
+            if (mapA[playerRow - 1][playerCol] === "B" && mapA[playerRow - 2][playerCol] === " ") {
+                mapA[playerRow - 2][playerCol] = "B";
+                mapA[playerRow - 1][playerCol] = "S";
+                mapA[playerRow][playerCol] = " ";
+                playerRow--;
                 drawBoard();
                 // move box dot -> floor
-            } else if (mapA[pRow - 1][pCol] === "X" && mapA[pRow - 2][pCol] === " ") {
-                mapA[pRow - 2][pCol] = "B";
-                mapA[pRow - 1][pCol] = "Y";
-                mapA[pRow][pCol] = " ";
-                pRow--;
+            } else if (mapA[playerRow - 1][playerCol] === "X" && mapA[playerRow - 2][playerCol] === " ") {
+                mapA[playerRow - 2][playerCol] = "B";
+                mapA[playerRow - 1][playerCol] = "Y";
+                mapA[playerRow][playerCol] = " ";
+                playerRow--;
                 drawBoard();
-            } else if (mapA[pRow - 1][pCol] === "B" && mapA[pRow - 2][pCol] === "O") {
+            } else if (mapA[playerRow - 1][playerCol] === "B" && mapA[playerRow - 2][playerCol] === "O") {
                 // move box dot
-                mapA[pRow - 2][pCol] = "X";
-                mapA[pRow - 1][pCol] = "S";
-                mapA[pRow][pCol] = " ";
-                pRow--;
+                mapA[playerRow - 2][playerCol] = "X";
+                mapA[playerRow - 1][playerCol] = "S";
+                mapA[playerRow][playerCol] = " ";
+                playerRow--;
                 drawBoard();
-            } else if (mapA[pRow - 1][pCol] === " ") {
+            } else if (mapA[playerRow - 1][playerCol] === " ") {
                 // move floor
-                mapA[pRow - 1][pCol] = "S";
-                mapA[pRow][pCol] = " ";
-                pRow--;
+                mapA[playerRow - 1][playerCol] = "S";
+                mapA[playerRow][playerCol] = " ";
+                playerRow--;
                 drawBoard();
-            } else if (mapA[pRow - 1][pCol] === "O") {
+            } else if (mapA[playerRow - 1][playerCol] === "O") {
                 // move dot
-                mapA[pRow - 1][pCol] = "Y";
-                mapA[pRow][pCol] = " ";
-                pRow--;
+                mapA[playerRow - 1][playerCol] = "Y";
+                mapA[playerRow][playerCol] = " ";
+                playerRow--;
                 drawBoard();
             }
             // player in dot
         } else {
             // move box -> floor
-            if (mapA[pRow - 1][pCol] === "B" && mapA[pRow - 2][pCol] === " ") {
-                mapA[pRow - 2][pCol] = "B";
-                mapA[pRow - 1][pCol] = "S";
-                mapA[pRow][pCol] = "O";
-                pRow--;
+            if (mapA[playerRow - 1][playerCol] === "B" && mapA[playerRow - 2][playerCol] === " ") {
+                mapA[playerRow - 2][playerCol] = "B";
+                mapA[playerRow - 1][playerCol] = "S";
+                mapA[playerRow][playerCol] = "O";
+                playerRow--;
                 drawBoard();
-            } else if (mapA[pRow - 1][pCol] === "B" && mapA[pRow - 2][pCol] === "O") {
+            } else if (mapA[playerRow - 1][playerCol] === "B" && mapA[playerRow - 2][playerCol] === "O") {
                 // move box -> dot
-                mapA[pRow - 2][pCol] = "X";
-                mapA[pRow - 1][pCol] = "S";
-                mapA[pRow][pCol] = "O";
-                pRow--;
+                mapA[playerRow - 2][playerCol] = "X";
+                mapA[playerRow - 1][playerCol] = "S";
+                mapA[playerRow][playerCol] = "O";
+                playerRow--;
                 drawBoard();
-            } else if (mapA[pRow - 1][pCol] === " ") {
+            } else if (mapA[playerRow - 1][playerCol] === " ") {
                 // move -> floor
-                mapA[pRow - 1][pCol] = "S";
-                mapA[pRow][pCol] = "O";
-                pRow--;
+                mapA[playerRow - 1][playerCol] = "S";
+                mapA[playerRow][playerCol] = "O";
+                playerRow--;
                 drawBoard();
-            } else if (mapA[pRow - 1][pCol] === "O") {
+            } else if (mapA[playerRow - 1][playerCol] === "O") {
                 // move -> dot
-                mapA[pRow - 1][pCol] = "Y";
-                mapA[pRow][pCol] = "O";
-                pRow--;
+                mapA[playerRow - 1][playerCol] = "Y";
+                mapA[playerRow][playerCol] = "O";
+                playerRow--;
                 drawBoard();
             }
         }
@@ -372,8 +348,8 @@ document.addEventListener("keydown", event => {
                 mapA.push([]);
                 mapA[i].push(...map[i].split(""));
             }
-            pRow = 2;
-            pCol = 2;
+            playerRow = 2;
+            playerCol = 2;
             drawBoard();
         }, 100);
     }
