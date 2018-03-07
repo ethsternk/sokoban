@@ -64,7 +64,7 @@ function drawBoard() {
 }
 drawBoard();
 
-// "move stuff" function logic
+// function that changes all the cells
 function move(right, down, oneOver, twoOver) {
     // if needed, change the cell two spots over
     if (twoOver !== "none") {
@@ -87,7 +87,18 @@ function move(right, down, oneOver, twoOver) {
     drawBoard();
 }
 
-// player position
+// function that checks if you've won
+function checkWin() {
+    let boxes = false;
+    for (let i = 0; i < mapA.length; i++) {
+        if (mapA[i].indexOf("B") > -1) {
+            boxes = true;
+        }
+    }
+    return boxes;
+}
+
+// player position variables
 let playerRow = 2;
 let playerCol = 2;
 
@@ -98,18 +109,24 @@ document.addEventListener("keydown", event => {
     
     // RIGHT
     if (key === "ArrowRight") {
-        // move box -> floor
-        if (mapA[playerRow][playerCol + 1] === "B" && mapA[playerRow][playerCol + 2] === " ") {
-            move(1, 0, "S", "B");
-        // move box -> dot
-        } else if (mapA[playerRow][playerCol + 1] === "B" && mapA[playerRow][playerCol + 2] === "O") {
-            move(1, 0, "S", "X");
-        // move pink box -> floor
-        } else if (mapA[playerRow][playerCol + 1] === "X" && mapA[playerRow][playerCol + 2] === " ") {
-            move(1, 0, "Y", "B");
-        // move pink box -> dot
-        } else if (mapA[playerRow][playerCol + 1] === "X" && mapA[playerRow][playerCol + 2] === "O") {
-            move(1, 0, "Y", "X");
+        // move box
+        if (mapA[playerRow][playerCol + 1] === "B") {
+            // to floor
+            if (mapA[playerRow][playerCol + 2] === " ") {
+                move(1, 0, "S", "B");
+            // to dot
+            } else if (mapA[playerRow][playerCol + 2] === "O") {
+                move(1, 0, "S", "X");
+            }
+        // move pink box
+        } else if (mapA[playerRow][playerCol + 1] === "X") {
+            // to floor
+            if (mapA[playerRow][playerCol + 2] === " ") {
+                move(1, 0, "Y", "B");
+            // to dot
+            } else if (mapA[playerRow][playerCol + 2] === "O") {
+                move(1, 0, "Y", "X");
+            }
         // move -> floor
         } else if (mapA[playerRow][playerCol + 1] === " ") {
             move(1, 0, "S", "none");
@@ -121,228 +138,95 @@ document.addEventListener("keydown", event => {
 
     // LEFT
     if (key === "ArrowLeft") {
-        // player on floor
-        if (mapA[playerRow][playerCol] === "S") {
-            // move box floor
-            if (mapA[playerRow][playerCol - 1] === "B" && mapA[playerRow][playerCol - 2] === " ") {
-                mapA[playerRow][playerCol - 2] = "B";
-                mapA[playerRow][playerCol - 1] = "S";
-                mapA[playerRow][playerCol] = " ";
-                playerCol--;
-                drawBoard();
-                // move box dot -> floor
-            } else if (mapA[playerRow][playerCol - 1] === "X" && mapA[playerRow][playerCol - 2] === " ") {
-                mapA[playerRow][playerCol - 2] = "B";
-                mapA[playerRow][playerCol - 1] = "Y";
-                mapA[playerRow][playerCol] = " ";
-                playerCol--;
-                drawBoard();
-            } else if (mapA[playerRow][playerCol - 1] === "B" && mapA[playerRow][playerCol - 2] === "O") {
-                // move box dot
-                mapA[playerRow][playerCol - 2] = "X";
-                mapA[playerRow][playerCol - 1] = "S";
-                mapA[playerRow][playerCol] = " ";
-                playerCol--;
-                drawBoard();
-            } else if (mapA[playerRow][playerCol - 1] === " ") {
-                // move floor
-                mapA[playerRow][playerCol - 1] = "S";
-                mapA[playerRow][playerCol] = " ";
-                playerCol--;
-                drawBoard();
-            } else if (mapA[playerRow][playerCol - 1] === "O") {
-                // move dot
-                mapA[playerRow][playerCol - 1] = "Y";
-                mapA[playerRow][playerCol] = " ";
-                playerCol--;
-                drawBoard();
+        // move box
+        if (mapA[playerRow][playerCol - 1] === "B") {
+            // to floor
+            if (mapA[playerRow][playerCol - 2] === " ") {
+                move(-1, 0, "S", "B");
+            // to dot
+            } else if (mapA[playerRow][playerCol - 2] === "O") {
+                move(-1, 0, "S", "X");
             }
-            // player in dot
-        } else {
-            // move box floor
-            if (mapA[playerRow][playerCol - 1] === "B" && mapA[playerRow][playerCol - 2] === " ") {
-                mapA[playerRow][playerCol - 2] = "B";
-                mapA[playerRow][playerCol - 1] = "S";
-                mapA[playerRow][playerCol] = "O";
-                playerCol--;
-                drawBoard();
-            } else if (mapA[playerRow][playerCol - 1] === "B" && mapA[playerRow][playerCol - 2] === "O") {
-                // move box dot
-                mapA[playerRow][playerCol - 2] = "X";
-                mapA[playerRow][playerCol - 1] = "S";
-                mapA[playerRow][playerCol] = "O";
-                playerCol--;
-                drawBoard();
-            } else if (mapA[playerRow][playerCol - 1] === " ") {
-                // move floor
-                mapA[playerRow][playerCol - 1] = "S";
-                mapA[playerRow][playerCol] = "O";
-                playerCol--;
-                drawBoard();
-            } else if (mapA[playerRow][playerCol - 1] === "O") {
-                // move dot
-                mapA[playerRow][playerCol - 1] = "Y";
-                mapA[playerRow][playerCol] = "O";
-                playerCol--;
-                drawBoard();
+        // move pink box
+        } else if (mapA[playerRow][playerCol - 1] === "X") {
+            // to floor
+            if (mapA[playerRow][playerCol - 2] === " ") {
+                move(-1, 0, "Y", "B");
+            // to dot
+            } else if (mapA[playerRow][playerCol - 2] === "O") {
+                move(-1, 0, "Y", "X");
             }
+        // move -> floor
+        } else if (mapA[playerRow][playerCol - 1] === " ") {
+            move(-1, 0, "S", "none");
+        // move -> dot
+        } else if (mapA[playerRow][playerCol - 1] === "O") {
+            move(-1, 0, "Y", "none");
         }
     }
 
     // DOWN
     if (key === "ArrowDown") {
-        // player on floor
-        if (mapA[playerRow][playerCol] === "S") {
-            // move box floor
-            if (mapA[playerRow + 1][playerCol] === "B" && mapA[playerRow + 2][playerCol] === " ") {
-                mapA[playerRow + 2][playerCol] = "B";
-                mapA[playerRow + 1][playerCol] = "S";
-                mapA[playerRow][playerCol] = " ";
-                playerRow++;
-                drawBoard();
-                // move box dot -> floor
-            } else if (mapA[playerRow + 1][playerCol] === "X" && mapA[playerRow + 2][playerCol] === " ") {
-                mapA[playerRow + 2][playerCol] = "B";
-                mapA[playerRow + 1][playerCol] = "Y";
-                mapA[playerRow][playerCol] = " ";
-                playerRow++;
-                drawBoard();
-            } else if (mapA[playerRow + 1][playerCol] === "B" && mapA[playerRow + 2][playerCol] === "O") {
-                // move box dot
-                mapA[playerRow + 2][playerCol] = "X";
-                mapA[playerRow + 1][playerCol] = "S";
-                mapA[playerRow][playerCol] = " ";
-                playerRow++;
-                drawBoard();
-            } else if (mapA[playerRow + 1][playerCol] === " ") {
-                // move floor
-                mapA[playerRow + 1][playerCol] = "S";
-                mapA[playerRow][playerCol] = " ";
-                playerRow++;
-                drawBoard();
-            } else if (mapA[playerRow + 1][playerCol] === "O") {
-                // move dot
-                mapA[playerRow + 1][playerCol] = "Y";
-                mapA[playerRow][playerCol] = " ";
-                playerRow++;
-                drawBoard();
+        // move box
+        if (mapA[playerRow + 1][playerCol] === "B") {
+            // to floor
+            if (mapA[playerRow + 2][playerCol] === " ") {
+                move(0, 1, "S", "B");
+            // to dot
+            } else if (mapA[playerRow + 2][playerCol] === "O") {
+                move(0, 1, "S", "X");
             }
-            // player in dot
-        } else {
-            // move box floor
-            if (mapA[playerRow + 1][playerCol] === "B" && mapA[playerRow + 2][playerCol] === " ") {
-                mapA[playerRow + 2][playerCol] = "B";
-                mapA[playerRow + 1][playerCol] = "S";
-                mapA[playerRow][playerCol] = "O";
-                playerRow++;
-                drawBoard();
-            } else if (mapA[playerRow + 1][playerCol] === "B" && mapA[playerRow + 2][playerCol] === "O") {
-                // move box dot
-                mapA[playerRow + 2][playerCol] = "X";
-                mapA[playerRow + 1][playerCol] = "S";
-                mapA[playerRow][playerCol] = "O";
-                playerRow++;
-                drawBoard();
-            } else if (mapA[playerRow + 1][playerCol] === " ") {
-                // move floor
-                mapA[playerRow + 1][playerCol] = "S";
-                mapA[playerRow][playerCol] = "O";
-                playerRow++;
-                drawBoard();
-            } else if (mapA[playerRow + 1][playerCol] === "O") {
-                // move dot
-                mapA[playerRow + 1][playerCol] = "Y";
-                mapA[playerRow][playerCol] = "O";
-                playerRow++;
-                drawBoard();
+        // move pink box
+        } else if (mapA[playerRow + 1][playerCol] === "X") {
+            // to floor
+            if (mapA[playerRow + 2][playerCol] === " ") {
+                move(0, 1, "Y", "B");
+            // to dot
+            } else if (mapA[playerRow + 2][playerCol] === "O") {
+                move(0, 1, "Y", "X");
             }
+        // move -> floor
+        } else if (mapA[playerRow + 1][playerCol] === " ") {
+            move(0, 1, "S", "none");
+        // move -> dot
+        } else if (mapA[playerRow + 1][playerCol] === "O") {
+            move(0, 1, "Y", "none");
         }
     }
 
     // UP
     if (key === "ArrowUp") {
-        // player on floor
-        if (mapA[playerRow][playerCol] === "S") {
-            // move box floor
-            if (mapA[playerRow - 1][playerCol] === "B" && mapA[playerRow - 2][playerCol] === " ") {
-                mapA[playerRow - 2][playerCol] = "B";
-                mapA[playerRow - 1][playerCol] = "S";
-                mapA[playerRow][playerCol] = " ";
-                playerRow--;
-                drawBoard();
-                // move box dot -> floor
-            } else if (mapA[playerRow - 1][playerCol] === "X" && mapA[playerRow - 2][playerCol] === " ") {
-                mapA[playerRow - 2][playerCol] = "B";
-                mapA[playerRow - 1][playerCol] = "Y";
-                mapA[playerRow][playerCol] = " ";
-                playerRow--;
-                drawBoard();
-            } else if (mapA[playerRow - 1][playerCol] === "B" && mapA[playerRow - 2][playerCol] === "O") {
-                // move box dot
-                mapA[playerRow - 2][playerCol] = "X";
-                mapA[playerRow - 1][playerCol] = "S";
-                mapA[playerRow][playerCol] = " ";
-                playerRow--;
-                drawBoard();
-            } else if (mapA[playerRow - 1][playerCol] === " ") {
-                // move floor
-                mapA[playerRow - 1][playerCol] = "S";
-                mapA[playerRow][playerCol] = " ";
-                playerRow--;
-                drawBoard();
-            } else if (mapA[playerRow - 1][playerCol] === "O") {
-                // move dot
-                mapA[playerRow - 1][playerCol] = "Y";
-                mapA[playerRow][playerCol] = " ";
-                playerRow--;
-                drawBoard();
+        // move box
+        if (mapA[playerRow - 1][playerCol] === "B") {
+            // to floor
+            if (mapA[playerRow - 2][playerCol] === " ") {
+                move(0, -1, "S", "B");
+            // to dot
+            } else if (mapA[playerRow - 2][playerCol] === "O") {
+                move(0, -1, "S", "X");
             }
-            // player in dot
-        } else {
-            // move box -> floor
-            if (mapA[playerRow - 1][playerCol] === "B" && mapA[playerRow - 2][playerCol] === " ") {
-                mapA[playerRow - 2][playerCol] = "B";
-                mapA[playerRow - 1][playerCol] = "S";
-                mapA[playerRow][playerCol] = "O";
-                playerRow--;
-                drawBoard();
-            } else if (mapA[playerRow - 1][playerCol] === "B" && mapA[playerRow - 2][playerCol] === "O") {
-                // move box -> dot
-                mapA[playerRow - 2][playerCol] = "X";
-                mapA[playerRow - 1][playerCol] = "S";
-                mapA[playerRow][playerCol] = "O";
-                playerRow--;
-                drawBoard();
-            } else if (mapA[playerRow - 1][playerCol] === " ") {
-                // move -> floor
-                mapA[playerRow - 1][playerCol] = "S";
-                mapA[playerRow][playerCol] = "O";
-                playerRow--;
-                drawBoard();
-            } else if (mapA[playerRow - 1][playerCol] === "O") {
-                // move -> dot
-                mapA[playerRow - 1][playerCol] = "Y";
-                mapA[playerRow][playerCol] = "O";
-                playerRow--;
-                drawBoard();
+        // move pink box
+        } else if (mapA[playerRow - 1][playerCol] === "X") {
+            // to floor
+            if (mapA[playerRow - 2][playerCol] === " ") {
+                move(0, -1, "Y", "B");
+            // to dot
+            } else if (mapA[playerRow - 2][playerCol] === "O") {
+                move(0, -1, "Y", "X");
             }
+        // move -> floor
+        } else if (mapA[playerRow - 1][playerCol] === " ") {
+            move(0, -1, "S", "none");
+        // move -> dot
+        } else if (mapA[playerRow - 1][playerCol] === "O") {
+            move(0, -1, "Y", "none");
         }
     }
 
-    // check for win
-
-    function checkWin() {
-        let boxes = false;
-        for (let i = 0; i < mapA.length; i++) {
-            if (mapA[i].indexOf("B") > -1) {
-                boxes = true;
-            }
-        }
-        return boxes;
-    }
+    // resets stuff if you win
     if (checkWin() === false) {
         setTimeout(function () {
-            alert("you won!");
+            alert("You saved the box princess!");
             mapA = [];
             for (let i = 0; i < map.length; i++) {
                 mapA.push([]);
