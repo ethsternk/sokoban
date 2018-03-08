@@ -10,14 +10,6 @@ const map = [
     "WWWWWWWW"
 ];
 
-// " " - Floor
-// "W" - Wall
-// "O" - Dot
-// "S" - Player
-// "B" - Box
-// "X" - Box on Dot
-// "Y" - Player on Dot
-
 // translates map to a nested array
 let mapA = map.map(row => row.split(""));
 
@@ -77,39 +69,44 @@ function move(right, down, oneOver, twoOver) {
     drawBoard();
 }
 
+// selects a cell
+function selectCell(x, y) {
+    return mapA[playerRow + x][playerCol + y];
+}
+
 // calls move() based on different surrounding cell types
 function initiateMove(right, down) {
 
     // move box...
-    if (mapA[playerRow + down][playerCol + right] === "B") {
+    if (selectCell(down, right) === "B") {
 
         // ...to floor
-        if (mapA[playerRow + (2 * down)][playerCol + (2 * right)] === " ") {
+        if (selectCell(2*down, 2*right) === " ") {
             move(right, down, "S", "B");
 
         // ...to dot
-        } else if (mapA[playerRow + (2 * down)][playerCol + (2 * right)] === "O") {
+        } else if (selectCell(2*down, 2*right) === "O") {
             move(right, down, "S", "X");           
         }
 
     // move pink box...
-    } else if (mapA[playerRow + down][playerCol + right] === "X") {
+    } else if (selectCell(down, right) === "X") {
 
         // ...to floor
-        if (mapA[playerRow + (2 * down)][playerCol + (2 * right)] === " ") {
+        if (selectCell(2*down, 2*right) === " ") {
             move(right, down, "Y", "B");
 
         // ...to dot
-        } else if (mapA[playerRow + (2 * down)][playerCol + (2 * right)] === "O") {
+        } else if (selectCell(2*down, 2*right) === "O") {
             move(right, down, "Y", "X");
         }
 
     // move to floor
-    } else if (mapA[playerRow + down][playerCol + right] === " ") {
+    } else if (selectCell(down, right) === " ") {
         move(right, down, "S");
 
     // move to dot
-    } else if (mapA[playerRow + down][playerCol + right] === "O") {
+    } else if (selectCell(down, right) === "O") {
         move(right, down, "Y");
     }
 
@@ -149,5 +146,4 @@ document.addEventListener("keydown", event => {
             drawBoard();
         }, 100);
     }
-
 });
