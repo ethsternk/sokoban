@@ -136,14 +136,12 @@ document.addEventListener("keydown", event => {
     if (key === "ArrowDown") { initiateMove(0, 1); };
     if (key === "ArrowUp") { initiateMove(0, -1); };
 
-    // resets stuff if you win
+    // overlays image if you win
     if (checkWin() === false) {
         setTimeout(function () {
-            alert("You saved the box princess!");
-            mapA = map.map(row => row.split(""));
-            playerRow = 2;
-            playerCol = 2;
-            drawBoard();
+            const newDiv = document.createElement("div");
+            newDiv.id = "princess";
+            document.body.appendChild(newDiv);
         }, 100);
     }
 });

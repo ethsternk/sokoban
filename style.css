@@ -14,6 +14,16 @@ body {
     background-color: rgb(64,144,192);
 }
 
+#princess {
+    background-image: url("princess.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50vh;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+}
+
 img {
     width: 500px;
     margin-bottom: 35px;
