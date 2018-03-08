@@ -42,12 +42,12 @@ function drawBoard() {
     };
 
     document.getElementById("container").innerHTML = "";
-    for (let i = 0; i < mapA.length; i++) {
-        for (let y = 0; y < map[i].length; y++) {
-            createDiv(tileClasses[mapA[i][y]]);
-            // console.log(tileClasses[map[i][y]]);
-        }
-    }
+
+    mapA.forEach((row) => 
+        row.forEach((col) =>
+            createDiv(tileClasses[col])
+        )
+    );
 }
 drawBoard();
 
@@ -67,17 +67,11 @@ function move(right, down, oneOver, twoOver) {
     mapA[playerRow + down][playerCol + right] = oneOver;
 
     // change the current cell
-    if (mapA[playerRow][playerCol] === "S") {
-        mapA[playerRow][playerCol] = " ";
-    } else {
-        mapA[playerRow][playerCol] = "O";
-    }
+    mapA[playerRow][playerCol] = mapA[playerRow][playerCol] === "S" ? " " : "O";
 
     // change player position variables
-    if (right === 1) {playerCol++;};
-    if (right === -1) {playerCol--;};
-    if (down === 1) {playerRow++;};
-    if (down === -1) {playerRow--;};
+    playerCol += right;
+    playerRow += down;
     
     // redraw board
     drawBoard();
