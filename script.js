@@ -19,11 +19,7 @@ const map = [
 // "Y" - Player on Dot
 
 // translates map to a nested array
-let mapA = [];
-for (let i = 0; i < map.length; i++) {
-    mapA.push([]);
-    mapA[i].push(...map[i].split(""));
-}
+let mapA = map.map(row => row.split(""));
 
 // adds all the divs to the HTML
 function createDiv(type) {
@@ -34,16 +30,22 @@ function createDiv(type) {
 
 // calls createDiv based on cell types to build the board
 function drawBoard() {
+
+    const tileClasses = {
+        " ": "floor",
+        "W": "wall",
+        "O": "dot",
+        "B": "box",
+        "X": "box-in-place",
+        "S": "player",
+        "Y": "player"
+    };
+
     document.getElementById("container").innerHTML = "";
     for (let i = 0; i < mapA.length; i++) {
         for (let y = 0; y < map[i].length; y++) {
-            if (mapA[i][y] === " ") { createDiv("floor"); };
-            if (mapA[i][y] === "W") { createDiv("wall"); };
-            if (mapA[i][y] === "O") { createDiv("dot"); };
-            if (mapA[i][y] === "B") { createDiv("box"); };
-            if (mapA[i][y] === "X") { createDiv("box-in-place"); };
-            if (mapA[i][y] === "S") { createDiv("player"); };
-            if (mapA[i][y] === "Y") { createDiv("player"); };
+            createDiv(tileClasses[mapA[i][y]]);
+            // console.log(tileClasses[map[i][y]]);
         }
     }
 }
@@ -57,7 +59,7 @@ let playerCol = 2;
 function move(right, down, oneOver, twoOver) {
 
     // change the cell two spots over (if needed)
-    if (twoOver !== "none") {
+    if (twoOver) {
         mapA[playerRow + (2 * down)][playerCol + (2 * right)] = twoOver;
     }
 
@@ -110,13 +112,13 @@ function initiateMove(right, down) {
 
     // move to floor
     } else if (mapA[playerRow + down][playerCol + right] === " ") {
-        move(right, down, "S", "none");
+        move(right, down, "S");
 
     // move to dot
     } else if (mapA[playerRow + down][playerCol + right] === "O") {
-        move(right, down, "Y", "none");
+        move(right, down, "Y");
     }
-    
+
 }
 
 // checks if you've won
@@ -147,11 +149,7 @@ document.addEventListener("keydown", event => {
     if (checkWin() === false) {
         setTimeout(function () {
             alert("You saved the box princess!");
-            mapA = [];
-            for (let i = 0; i < map.length; i++) {
-                mapA.push([]);
-                mapA[i].push(...map[i].split(""));
-            }
+            mapA = map.map(row => row.split(""));
             playerRow = 2;
             playerCol = 2;
             drawBoard();
